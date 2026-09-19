@@ -10,9 +10,9 @@ spring:
       mode: never
 
   datasource:
-    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-    username: ${MYSQLUSER}
-    password: ${MYSQLPASSWORD}
+    url: jdbc:mysql://mysql.railway.internal:3306/railway?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: NDuBuTiOultLWXcWYseGajyLfhykoIU
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jackson:
