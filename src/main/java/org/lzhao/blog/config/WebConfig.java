@@ -44,10 +44,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(
-                    "https://blog-frontend-xxx.vercel.app",  // ← 你的 Vercel 地址
-                    "http://localhost:5173"
-                    )
+                .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)               // 允许携带 Cookie
