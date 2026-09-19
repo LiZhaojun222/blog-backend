@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.lzhao.blog.mapper.CategoryMapper">
+
+    <resultMap id="BaseResultMap" type="org.lzhao.blog.entity.Category">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="sort" property="sort"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, sort, create_time
+    </sql>
+
+    <!-- 查询所有 -->
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM category
+        ORDER BY sort ASC, id ASC
+    </select>
+
+    <!-- 根据 ID 查询 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM category
+        WHERE id = #{id}
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO category (name, sort)
+        VALUES (#{name}, #{sort})
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE category
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="sort != null">sort = #{sort},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById">
+        DELETE FROM category WHERE id = #{id}
+    </delete>
+
+    <!-- 统计分类下的文章数 -->
+    <select id="countArticles" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM article WHERE category_id = #{categoryId}
+    </select>
+
+</mapper>

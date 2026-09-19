@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须指向 Mapper 接口的全限定名 -->
+<mapper namespace="org.lzhao.blog.mapper.ArticleMapper">
+
+    <!-- 通用查询结果映射 -->
+    <resultMap id="BaseResultMap" type="org.lzhao.blog.entity.Article">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="summary" property="summary"/>
+        <result column="cover_image" property="coverImage"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="author_id" property="authorId"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询字段 -->
+    <sql id="Base_Column_List">
+        id, title, content, summary, cover_image, category_id, author_id, view_count, status, create_time, update_time
+    </sql>
+
+    <select id="findByPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM article
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR summary LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'view_count'">view_count</when>
+            <when test="sortBy == 'update_time'">update_time</when>
+            <otherwise>create_time</otherwise>
+        </choose>
+        <choose>
+            <when test="order == 'asc'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByCondition" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM article
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR summary LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据 ID 查询 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM article
+        WHERE id = #{id}
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO article (title, content, summary, cover_image, category_id, author_id, status)
+        VALUES (#{title}, #{content}, #{summary}, #{coverImage}, #{categoryId}, #{authorId}, #{status})
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE article
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="coverImage != null">cover_image = #{coverImage},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById">
+        DELETE FROM article WHERE id = #{id}
+    </delete>
+
+    <!-- 浏览量 +1 -->
+    <update id="incrementViewCount">
+        UPDATE article SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
+
+    <!-- 查询某个作者的文章 -->
+    <select id="findByAuthor" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM article
+        WHERE author_id = #{authorId}
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 统计某个作者的文章总数 -->
+    <select id="countByAuthor" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM article WHERE author_id = #{authorId}
+    </select>
+
+</mapper>
