@@ -5,6 +5,10 @@ spring:
   application:
     name: blog-backend
 
+  sql:
+    init:
+      mode: never
+
   datasource:
     url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: ${MYSQLUSER}
